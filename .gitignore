@@ -1,0 +1,21 @@
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\  Очень простой способ дропнуть все  \\
+\\ карты с трёх очередей в один щелчок \\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\        Написал CrazyHackGUT         \\
+\\    Основано на JS-скрипте от xPaw   \\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\ Оригинал скрипта: https://gist.githubusercontent.com/xPaw/73f8ae2031b4e528abf7/raw/7c5fe9ffffe0756b5266be4999630e8b03672974/steam_quick_queue.js
+
+1. Создаём закладку, и указываем в адресе сайта следующий текст:
+javascript:var DiscoveryQueueModal, GenerateQueue = function( queueNumber ) { DiscoveryQueueModal = ShowBlockingWaitDialog( 'Просмотр очереди...', 'Генерируется новая очередь рекомендуемых игр #' + ++queueNumber ); jQuery.post( 'http://store.steampowered.com/explore/generatenewdiscoveryqueue', { sessionid: g_sessionID, queuetype: 0 } ).done( function( data ) {var requests = [], done = 0, errorShown; for( var i = 0; i < data.queue.length; i++ ) {var request = jQuery.post( 'http://store.steampowered.com/app/10', { appid_to_clear_from_queue: data.queue[ i ], sessionid: g_sessionID } ); request.done( function() { if( errorShown ) { return; } DiscoveryQueueModal.Dismiss(); DiscoveryQueueModal = ShowBlockingWaitDialog( 'Просмотр очереди...', 'Производится запрос ' + ++done + ' из ' + data.queue.length ); } ); request.fail( function() { errorShown = true; DiscoveryQueueModal.Dismiss(); DiscoveryQueueModal = ShowConfirmDialog( 'Ошибка', 'Не удалось удалить предмет из очереди рекомендуемого #' + ++done, 'Повторить попытку' ).done( function() { GenerateQueue( queueNumber - 1 ); }); } ); requests.push( request ); } jQuery.when.apply( jQuery, requests ).done( function() { DiscoveryQueueModal.Dismiss(); if( queueNumber < 3 ) { GenerateQueue( queueNumber ); } else { DiscoveryQueueModal = ShowConfirmDialog( 'Готово', 'Было просмотрено около ' + queueNumber + ' списков рекомендуемых игр', 'Перезагрузить страницу' ).done( function() { ShowBlockingWaitDialog( 'Перезагрузка страницы...' ); window.location.reload(); }); } } ); } ).fail( function() { DiscoveryQueueModal.Dismiss(); DiscoveryQueueModal = ShowConfirmDialog( 'Ошибка', 'Не удалось сгенерировать очередь рекомендуемых игр #' + queueNumber, 'Повторить попытку' ).done( function() { GenerateQueue( queueNumber - 1 ); }); } ); }; GenerateQueue( 0 );
+
+2. Переходим на https://store.steampowered.com/explore/
+
+3. Щёлкаем по закладке.
+
+4. Ждём 10-20 секунд, пока окно не предложит перезагрузить страницу.
+
+5. ?!?
+
+6. PROFIT!
